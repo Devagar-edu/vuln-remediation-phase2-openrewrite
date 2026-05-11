@@ -15,8 +15,27 @@ def safe_path(user_input):
 
 
 def connect_jira():
+    """
+    Connect to Jira using environment variables.
+    
+    The JIRA_URL should be the base URL only (e.g., https://your-domain.atlassian.net)
+    without any API paths like /rest/api/2 or /rest/api/3.
+    
+    Returns:
+        JIRA client instance
+    """
+    jira_url = os.environ.get('JIRA_URL', '').rstrip('/')
+    
+    # Remove any API paths if accidentally included in JIRA_URL
+    # The JIRA library will add the correct API path automatically
+    if '/rest/api' in jira_url:
+        # Extract base URL before /rest/api
+        jira_url = jira_url.split('/rest/api')[0]
+    
+    print(f"Connecting to Jira at: {jira_url}")
+    
     return JIRA(
-        server=os.environ.get('JIRA_URL'),
+        server=jira_url,
         basic_auth=(os.environ.get("JIRA_EMAIL"), os.environ.get("JIRA_API_TOKEN"))
     )
 
@@ -103,44 +122,57 @@ def create_jira_ticket(json_file):
     Args:
         json_file: Path to JSON file containing scan results
     """
-    jira = connect_jira()
-    scan = load_scan(json_file)
+    try:
+        jira = connect_jira()
+        scan = load_scan(json_file)
 
-    description = build_summary(scan)
-    
-    # Get scanner name from metadata
-    scanner = scan['scan_metadata'].get('scanner', 'snyk')
-    
-    # Build labels based on scanner
-    labels = ["security", "auto-scan"]
-    
-    # Add scanner-specific labels
-    if "snyk" in scanner.lower():
-        labels.append("snyk")
-    if "inspector" in scanner.lower():
-        labels.append("inspector")
-        labels.append("aws")
+        description = build_summary(scan)
+        
+        # Get scanner name from metadata
+        scanner = scan['scan_metadata'].get('scanner', 'snyk')
+        
+        # Build labels based on scanner
+        labels = ["security", "auto-scan"]
+        
+        # Add scanner-specific labels
+        if "snyk" in scanner.lower():
+            labels.append("snyk")
+        if "inspector" in scanner.lower():
+            labels.append("inspector")
+            labels.append("aws")
 
-    issue_dict = {
-        "project": {"key": PROJECT_KEY},
-        "summary": f"Security Scan Findings ({scanner}) - {scan['scan_metadata']['project']}",
-        "description": description,
-        "issuetype": {"name": "Task"},
-        "labels": labels
-    }
+        issue_dict = {
+            "project": {"key": PROJECT_KEY},
+            "summary": f"Security Scan Findings ({scanner}) - {scan['scan_metadata']['project']}",
+            "description": description,
+            "issuetype": {"name": "Task"},
+            "labels": labels
+        }
 
-    issue = jira.create_issue(fields=issue_dict)
+        print(f"Creating Jira ticket in project: {PROJECT_KEY}")
+        issue = jira.create_issue(fields=issue_dict)
 
-    print("Jira ticket created:", issue.key)
+        print("Jira ticket created:", issue.key)
 
-    with open(json_file, "rb") as f:
-        jira.add_attachment(
-            issue=issue.key,
-            attachment=f,
-            filename="scan_payload.json"
-        )
+        with open(json_file, "rb") as f:
+            jira.add_attachment(
+                issue=issue.key,
+                attachment=f,
+                filename="scan_payload.json"
+            )
 
-    print("JSON attached to ticket.")
+        print("JSON attached to ticket.")
+        
+    except Exception as e:
+        print(f"Error creating Jira ticket: {e}", file=sys.stderr)
+        print(f"Error type: {type(e).__name__}", file=sys.stderr)
+        
+        # Print more details if available
+        if hasattr(e, 'response'):
+            print(f"Response status: {e.response.status_code}", file=sys.stderr)
+            print(f"Response text: {e.response.text}", file=sys.stderr)
+        
+        raise
 
 
 if __name__ == "__main__":
