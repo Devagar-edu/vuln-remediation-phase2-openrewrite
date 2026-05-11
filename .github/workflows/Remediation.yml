@@ -1,0 +1,351 @@
+name: AI Security Remediation
+
+on:
+  repository_dispatch:
+    types: [jira-remediation]
+
+jobs:
+  remediation:
+    runs-on: ubuntu-latest
+
+    env:
+      ISSUE_KEY: ${{ github.event.client_payload.issue }}
+
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      models: read 
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Install Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # -------------------------------
+      # NEW: Fetch Jira Attachment
+      # -------------------------------
+      - name: Get Jira Issue Details
+        run: |
+          curl -s \
+            -u "${{ secrets.JIRA_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -H "Accept: application/json" \
+            ${{ secrets.JIRA_URL }}/rest/api/3/issue/$ISSUE_KEY \
+            > issue.json
+
+      - name: Extract Attachment URL
+        run: |
+          ATTACH_URL=$(jq -r '
+            .fields.attachment[]
+            | select(.filename=="scan_payload.json")
+            | .content
+          ' issue.json)
+
+          echo "ATTACH_URL=$ATTACH_URL" >> $GITHUB_ENV
+
+      - name: Download Snyk Report or Fallback
+        run: |
+          if [ -z "$ATTACH_URL" ] || [ "$ATTACH_URL" == "null" ]; then
+            echo "No attachment found. Running Snyk scan..."
+            # snyk code test --json > snyk.json || true
+          else
+            echo "Downloading Snyk report from Jira..."
+            curl -L \
+              -u "${{ secrets.JIRA_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+              -o snyk.json \
+              "$ATTACH_URL"
+          fi
+
+      # ── Create fix branch ────────────────────────────────────────────────
+      - name: Create Fix Branch
+        run: |
+          BRANCH="security/fix-$ISSUE_KEY-${{ github.run_id }}"
+          git checkout -b "$BRANCH"
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+
+      # -------------------------------
+      # Process  and fix vulnerabilities
+      # -------------------------------
+      
+      - name: Fix Dependencies
+        run: |
+          python .github/scripts/fix_dependencies.py snyk.json pom.xml
+
+      - name: Print updated pom.xml
+        run: cat pom.xml
+
+      # ═════════════════════════════════════════════════════════════
+      # SELF-HEALING BUILD LOOP (Max 5 iterations)
+      # ═════════════════════════════════════════════════════════════
+      - name: Self-Healing Build (AI Loop)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MAX_RETRIES=5
+          COUNT=1
+
+          while [ $COUNT -le $MAX_RETRIES ]
+          do
+            echo "════════════════════════════════════════════"
+            echo "🔁 ITERATION $COUNT"
+            echo "════════════════════════════════════════════"
+
+            # Step 1: Compile
+            mvn clean compile 2>&1 | tee build.log || true
+
+            if grep -q "BUILD SUCCESS" build.log; then
+              echo "✅ Build succeeded at iteration $COUNT"
+              exit 0
+            fi
+
+            ERROR_COUNT=$(grep -c "\[ERROR\].*\.java:" build.log || echo 0)
+            echo "❌ Build failed with $ERROR_COUNT errors"
+
+            # Step 2: Run Fix Agent
+            echo "🤖 Running AI Fix Agent..."
+            python .github/scripts/fix_imports.py build.log pom.xml src/
+
+            echo "🛠 Fix applied. Retrying build..."
+
+            COUNT=$((COUNT+1))
+          done
+
+          echo "🚨 Build failed after $MAX_RETRIES attempts"
+
+
+      - name: Fix Code Vulnerabilities with AI
+        if: failure() || success()  # Always run after compile attempt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python .github/scripts/fix_code_vulnerabilities.py snyk.json
+
+      # ═════════════════════════════════════════════════════════════
+      # SELF-HEALING BUILD LOOP (Max 5 iterations)
+      # ═════════════════════════════════════════════════════════════
+      - name: Self-Healing Build (AI Loop)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MAX_RETRIES=5
+          COUNT=1
+
+          while [ $COUNT -le $MAX_RETRIES ]
+          do
+            echo "════════════════════════════════════════════"
+            echo "🔁 ITERATION $COUNT"
+            echo "════════════════════════════════════════════"
+
+            # Step 1: Compile
+            mvn clean compile 2>&1 | tee build.log || true
+
+            if grep -q "BUILD SUCCESS" build.log; then
+              echo "✅ Build succeeded at iteration $COUNT"
+              exit 0
+            fi
+
+            ERROR_COUNT=$(grep -c "\[ERROR\].*\.java:" build.log || echo 0)
+            echo "❌ Build failed with $ERROR_COUNT errors"
+
+            # Step 2: Run Fix Agent
+            echo "🤖 Running AI Fix Agent..."
+            python .github/scripts/fix_imports.py build.log pom.xml src/
+
+            echo "🛠 Fix applied. Retrying build..."
+
+            COUNT=$((COUNT+1))
+          done
+
+          echo "🚨 Build failed after $MAX_RETRIES attempts"
+
+      
+
+      - name: Commit Fix
+        run: |
+          git config user.name security-bot
+          git config user.email bot@users.noreply.github.com
+          git add .
+          git commit -m "AI security remediation" || echo "No changes to commit"
+          git push origin HEAD
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_URL=$(gh pr create \
+            --title "AI Security Remediation" \
+            --body "Automated security remediation." \
+            --base main \
+            --head $BRANCH)
+
+          PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
+          echo "PR=$PR_NUMBER" >> $GITHUB_ENV
+
+
+#      - name: Mechanical Code Fixes (OpenRewrite)
+#        run: mvn -q org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.skipMavenParsing=true
+
+#      - name: Compile & Capture Errors
+#        run: mvn clean compile 2>&1 | tee build-pass2.log || true
+
+  #     - name: Compile Project
+  #       id: compile
+  #       run: |
+  #         set -e
+  #         mvn clean compile
+  #       continue-on-error: true
+
+  # # -------------------------------
+  #     # PASS 1: Build & Capture ALL Errors
+  #     # -------------------------------
+  #     - name: Initial Compile — Capture Full Error Log
+  #       id: compile_pass1
+  #       run: |
+  #         mvn clean compile 2>&1 | tee build-pass1.log || true
+  #         # Always continue — we want the full error list regardless
+  #         if grep -q "BUILD SUCCESS" build-pass1.log; then
+  #           echo "COMPILE_PASS1_STATUS=success" >> $GITHUB_ENV
+  #         else
+  #           echo "COMPILE_PASS1_STATUS=failure" >> $GITHUB_ENV
+  #         fi
+ 
+  #     # -------------------------------
+  #     # PASS 2: Fix Imports (Mechanical — no AI)
+  #     # Only runs if Pass 1 had compile errors
+  #     # -------------------------------
+  #     - name: Fix Import & Symbol Errors
+  #       if: env.COMPILE_PASS1_STATUS == 'failure'
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         echo "Running import/symbol fix script..."
+  #         python .github/scripts/fix_imports.py build-pass1.log pom.xml src/
+  #         echo "Import fix complete."
+
+
+  #     - name: Fix Code Vulnerabilities with AI
+  #       if: failure() || success()  # Always run after compile attempt
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         python .github/scripts/fix_code_vulnerabilities.py snyk.json
+
+  #     - name: Upload fixed Java files
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: fixed-java-files
+  #         path: src/main/java/**/*.java
+  #     - name: Recompile After Fixes
+  #       run: |
+  #         mvn clean compile
+
+
+  #     - name: Create Fix Branch
+  #       run: |
+  #         BRANCH="security/remediation-${{ github.run_id }}"
+  #         git checkout -b $BRANCH
+  #         echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+
+  #     - name: Commit Fix
+  #       run: |
+  #         git config user.name security-bot
+  #         git config user.email bot@users.noreply.github.com
+  #         git add .
+  #         git commit -m "AI security remediation" || echo "No changes to commit"
+  #         git push origin HEAD
+
+  #     - name: Create PR
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         PR_URL=$(gh pr create \
+  #           --title "AI Security Remediation" \
+  #           --body "Automated security remediation." \
+  #           --base main \
+  #           --head $BRANCH)
+
+  #         PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
+  #         echo "PR=$PR_NUMBER" >> $GITHUB_ENV
+
+  #     - name: Update Jira status to Review
+  #       run: |
+  #         curl \
+  #         -u "${{ secrets.JIRA_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+  #         -H "Content-Type: application/json" \
+  #         -X POST \
+  #         --data '{
+  #           "transition": {
+  #             "id": "4"
+  #           }
+  #         }' \
+  #         ${{ secrets.JIRA_URL }}/rest/api/3/issue/$ISSUE_KEY/transitions
+
+      # - name: Generate GitHub Summary
+      #   if: always()
+      #   run: |
+      #     TOTAL=$(jq '.runs[0].results | length' snyk.json 2>/dev/null || echo 0)
+      #     FILES_FIXED=$(cat files.txt 2>/dev/null | wc -l | tr -d ' ')
+
+      #     {
+      #       echo "## 🛠️ AI Security Remediation Summary"
+      #       echo ""
+
+      #       if [ "$TOTAL" -eq 0 ]; then
+      #         echo "✅ **No vulnerabilities required remediation.**"
+      #       else
+      #         HIGH=$(jq '[.runs[0].results[] | select(.level=="error")] | length' snyk.json)
+      #         MEDIUM=$(jq '[.runs[0].results[] | select(.level=="warning")] | length' snyk.json)
+      #         LOW=$(jq '[.runs[0].results[] | select(.level=="note")] | length' snyk.json)
+
+      #         echo "| Metric | Value |"
+      #         echo "|--------|-------|"
+      #         echo "| 🔴 High vulnerabilities | $HIGH |"
+      #         echo "| 🟡 Medium vulnerabilities | $MEDIUM |"
+      #         echo "| 🔵 Low vulnerabilities | $LOW |"
+      #         echo "| **Total vulnerabilities** | **$TOTAL** |"
+      #         echo "| 📁 Files patched | $FILES_FIXED |"
+      #         echo ""
+      #         echo "### Vulnerabilities Remediated"
+      #         echo ""
+      #         echo "| # | Rule ID | Severity | File | Line | Description |"
+      #         echo "|---|---------|----------|------|------|-------------|"
+
+      #         jq -r '
+      #           .runs[0].results[] |
+      #           [
+      #             .ruleId // "N/A",
+      #             (.level // "note"),
+      #             (.locations[0].physicalLocation.artifactLocation.uri // "N/A"),
+      #             (.locations[0].physicalLocation.region.startLine // "N/A" | tostring),
+      #             (.message.text // "N/A" | gsub("\n"; " ") | .[0:100])
+      #           ] | @tsv
+      #         ' snyk.json | awk -F'\t' 'BEGIN{i=1} {
+      #           sev=$2
+      #           if (sev=="error") emoji="🔴 High"
+      #           else if (sev=="warning") emoji="🟡 Medium"
+      #           else emoji="🔵 Low"
+      #           printf "| %d | `%s` | %s | `%s` | %s | %s |\n", i, $1, emoji, $3, $4, $5
+      #           i++
+      #         }'
+
+      #         echo ""
+      #         echo "---"
+      #         echo ""
+
+      #         if [ -n "$PR" ]; then
+      #           PR_URL="https://github.com/${{ github.repository }}/pull/$PR"
+      #           echo "🔀 **Pull Request**: [PR #$PR]($PR_URL)"
+      #           echo ""
+      #         fi
+
+      #         JIRA_URL_BROWSE="${{ secrets.JIRA_URL }}/browse/$ISSUE_KEY"
+      #         echo "🎫 **Jira Ticket**: [$ISSUE_KEY]"
+      #       fi
+      #     } >> $GITHUB_STEP_SUMMARY

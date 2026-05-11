@@ -1,0 +1,100 @@
+name: AWS Inspector Vulnerability Detection
+
+on:
+  workflow_dispatch:
+    inputs:
+      inspector_json_file:
+        description: 'Path to AWS Inspector JSON findings file'
+        required: true
+        type: string
+
+jobs:
+  process-inspector-findings:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      models: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate Inspector JSON exists
+        run: |
+          if [ ! -f "${{ inputs.inspector_json_file }}" ]; then
+            echo "Error: Inspector JSON file not found: ${{ inputs.inspector_json_file }}"
+            exit 1
+          fi
+          echo "Inspector JSON file found: ${{ inputs.inspector_json_file }}"
+
+      - name: Normalize Inspector findings
+        run: |
+          python .github/scripts/normalize_inspector.py \
+            --input "${{ inputs.inspector_json_file }}" \
+            --output inspector_normalized.json
+
+      - name: Count vulnerabilities
+        id: vuln-check
+        run: |
+          # Count findings in the normalized output
+          COUNT=$(jq '[.dependency_vulnerabilities[], .code_vulnerabilities[]] | length' inspector_normalized.json 2>/dev/null || echo 0)
+          echo "Inspector findings: $COUNT"
+          
+          if [ "$COUNT" -gt 0 ]; then
+            echo "found_vulns=true" >> $GITHUB_OUTPUT
+            echo "vuln_count=$COUNT" >> $GITHUB_OUTPUT
+          else
+            echo "found_vulns=false" >> $GITHUB_OUTPUT
+            echo "vuln_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload normalized report
+        if: steps.vuln-check.outputs.found_vulns == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: inspector-normalized-report
+          path: inspector_normalized.json
+
+      - name: Create Jira Ticket
+        if: steps.vuln-check.outputs.found_vulns == 'true'
+        run: python .github/scripts/create_jira.py inspector_normalized.json
+        env:
+          JIRA_URL: ${{ secrets.JIRA_URL }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Generate GitHub Summary
+        if: always()
+        run: |
+          TOTAL=${{ steps.vuln-check.outputs.vuln_count }}
+          
+          {
+            echo "## 🔍 AWS Inspector Scan Summary"
+            echo ""
+            
+            if [ "$TOTAL" -eq 0 ]; then
+              echo "✅ **No vulnerabilities detected in application dependencies.**"
+              echo ""
+              echo "Note: OS-level and infrastructure vulnerabilities are excluded from this scan."
+            else
+              echo "| Metric | Value |"
+              echo "|--------|-------|"
+              echo "| 📦 Application dependency vulnerabilities | $TOTAL |"
+              echo ""
+              echo "### Next Steps"
+              echo ""
+              echo "1. ✅ Normalized findings uploaded as artifact"
+              echo "2. ✅ Jira ticket created with vulnerability details"
+              echo "3. ⏳ Remediation will be triggered when Jira ticket status changes"
+              echo ""
+              echo "---"
+              echo ""
+              echo "**Note**: This workflow processes only application-level dependencies (npm, Maven, Gradle, pip)."
+              echo "OS-level packages (apt, yum, apk, rpm) are excluded and require separate infrastructure remediation."
+            fi
+          } >> $GITHUB_STEP_SUMMARY

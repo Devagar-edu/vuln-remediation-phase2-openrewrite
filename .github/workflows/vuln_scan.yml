@@ -1,0 +1,81 @@
+name: Vulnerability Detection
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  scan-and-create-jira:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Snyk Auth
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Run Snyk Test
+        id: snyk-deps
+        run: |
+         snyk test --json-file-output=snyk-deps.json || true
+
+      - name: Upload normalized report
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyck-deps-report
+          path: snyk-deps.json
+
+      - name: Run Snyk Test
+        id: snyk-code
+        run: |
+         snyk code test --json-file-output=snyk-code.json || true
+
+      - name: Upload normalized report
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyck-code-report
+          path: snyk-code.json
+
+      - name: Check if vulnerabilities exist
+        id: vuln-check
+        run: |
+          DEPS_COUNT=$(jq '.vulnerabilities | length' snyk-deps.json 2>/dev/null || echo 0)
+          CODE_COUNT=$(jq '[.runs[].results[]] | length' snyk-code.json 2>/dev/null || echo 0)
+
+          echo "Dependency vulnerabilities: $DEPS_COUNT"
+          echo "Code vulnerabilities: $CODE_COUNT"
+
+          if [ "$DEPS_COUNT" -gt 0 ] || [ "$CODE_COUNT" -gt 0 ]; then
+            echo "found_vulns=true" >> $GITHUB_OUTPUT
+          else
+            echo "found_vulns=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Normalize vulnerability data
+        if: steps.vuln-check.outputs.found_vulns == 'true'
+        run: |
+          python .github/scripts/normalize_snyk.py \
+            --deps snyk-deps.json \
+            --code snyk-code.json \
+            --output vuln_report.json 
+
+      - name: Upload normalized report
+        if: steps.vuln-check.outputs.found_vulns == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: normalized-report
+          path: vuln_report.json
+
+      - name: Create Jira Ticket
+        if: steps.vuln-check.outputs.found_vulns == 'true'
+        run: python .github/scripts/create_jira.py vuln_report.json
+        env:
+          JIRA_URL: ${{ secrets.JIRA_URL }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}

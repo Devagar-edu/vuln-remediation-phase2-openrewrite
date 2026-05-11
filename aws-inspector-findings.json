@@ -1,0 +1,1138 @@
+{
+  "findings": [
+    {
+      "awsAccountId": "123456789012",
+      "description": "Netty, an asynchronous event-driven network application framework, has a vulnerability where specially crafted packets received via SslHandler can cause improper validation leading to native crashes. This affects the stability and availability of applications using the vulnerable Netty version.",
+      "epss": {
+        "score": 0.00234
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202524970-001",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 9.1,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://nvd.nist.gov/vuln/detail/CVE-2025-24970",
+          "https://github.com/netty/netty/security/advisories"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2025-24970",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "CRITICAL",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2025-24970",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/netty-handler-4.1.115.Final.jar",
+            "fixedInVersion": "4.1.118.Final",
+            "name": "io.netty:netty-handler",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "4.1.115.Final"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade io.netty:netty-handler to version 4.1.118.Final or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "CRITICAL",
+      "status": "ACTIVE",
+      "title": "CVE-2025-24970 - io.netty:netty-handler",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "An unsafe reading of environment files could potentially cause denial of service in Netty. When loaded on a Windows application, Netty attempts to load a file that does not exist. If an attacker creates a sufficiently large file, the Netty application crashes.",
+      "epss": {
+        "score": 0.00043
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202447535-002",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 5.3,
+            "scoringVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-47535",
+          "https://netty.io/news/2024/11/12/4-1-115-Final.html"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2024-47535",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "MEDIUM",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2024-47535",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/netty-handler-4.1.115.Final.jar",
+            "fixedInVersion": "4.1.116.Final",
+            "name": "io.netty:netty-handler",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "4.1.115.Final"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade io.netty:netty-handler to version 4.1.116.Final or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "MEDIUM",
+      "status": "ACTIVE",
+      "title": "CVE-2024-47535 - io.netty:netty-handler",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "The SniHandler in Netty can allocate up to 16MB of heap memory for each channel during TLS handshake. When the handler or channel lacks an idle timeout, this can be exploited to cause memory exhaustion in TCP servers using SniHandler.",
+      "epss": {
+        "score": 0.00156
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202334462-003",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 7.5,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://github.com/advisories/GHSA-6mjq-h674-j845",
+          "https://nvd.nist.gov/vuln/detail/CVE-2023-34462"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://github.com/advisories/GHSA-6mjq-h674-j845",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "HIGH",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2023-34462",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/netty-handler-4.1.115.Final.jar",
+            "fixedInVersion": "4.1.94.Final",
+            "name": "io.netty:netty-handler",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "4.1.115.Final"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade io.netty:netty-handler to version 4.1.94.Final or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "HIGH",
+      "status": "ACTIVE",
+      "title": "CVE-2023-34462 - io.netty:netty-handler",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Spring MVC and WebFlux applications are vulnerable to stream corruption when using Server-Sent Events (SSE). This can lead to data integrity issues and potential information disclosure in applications utilizing SSE for real-time updates.",
+      "epss": {
+        "score": 0.00089
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202622735-004",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 7.4,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2026-22735/",
+          "https://spring.io/security/"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2026-22735/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "HIGH",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2026-22735",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/spring-webmvc-5.3.31.jar",
+            "fixedInVersion": "5.3.47",
+            "name": "org.springframework:spring-webmvc",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "5.3.31"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.springframework:spring-webmvc to version 5.3.47 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "HIGH",
+      "status": "ACTIVE",
+      "title": "CVE-2026-22735 - org.springframework:spring-webmvc",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Use of Java scripting engine-enabled template views (e.g., JRuby, Jython) in Spring MVC and WebFlux applications can result in disclosure of content from files outside the configured locations for script template views. This represents an information disclosure vulnerability.",
+      "epss": {
+        "score": 0.00067
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202622737-005",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 5.9,
+            "scoringVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2026-22737/",
+          "https://www.sentinelone.com/vulnerability-database/cve-2026-22737/"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2026-22737/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "MEDIUM",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2026-22737",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/spring-webmvc-5.3.31.jar",
+            "fixedInVersion": "5.3.47",
+            "name": "org.springframework:spring-webmvc",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "5.3.31"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.springframework:spring-webmvc to version 5.3.47 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "MEDIUM",
+      "status": "ACTIVE",
+      "title": "CVE-2026-22737 - org.springframework:spring-webmvc",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Spring Framework MVC applications can be vulnerable to path traversal attacks when deployed on non-compliant Servlet containers. Attackers may be able to access files outside the intended directory structure.",
+      "epss": {
+        "score": 0.00045
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202541242-006",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 5.9,
+            "scoringVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2025-41242/",
+          "https://spring.io/security/"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2025-41242/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "MEDIUM",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2025-41242",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/spring-webmvc-5.3.31.jar",
+            "fixedInVersion": "5.3.47",
+            "name": "org.springframework:spring-webmvc",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "5.3.31"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.springframework:spring-webmvc to version 5.3.47 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "MEDIUM",
+      "status": "ACTIVE",
+      "title": "CVE-2025-41242 - org.springframework:spring-webmvc",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Spring functional web frameworks are vulnerable to path traversal attacks. Attackers can craft malicious HTTP requests to obtain any file on the filesystem that is accessible to the process running the Spring application.",
+      "epss": {
+        "score": 0.02134
+      },
+      "exploitAvailable": "YES",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202438816-007",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 7.5,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2024-38816/",
+          "https://spring.io/security/"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2024-38816/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "HIGH",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2024-38816",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/spring-webmvc-5.3.31.jar",
+            "fixedInVersion": "5.3.40",
+            "name": "org.springframework:spring-webmvc",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "5.3.31"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.springframework:spring-webmvc to version 5.3.40 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "HIGH",
+      "status": "ACTIVE",
+      "title": "CVE-2024-38816 - org.springframework:spring-webmvc",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Spring MVC controller methods with @RequestBody byte[] parameters are vulnerable to Denial of Service attacks. Attackers can send specially crafted requests to exhaust server resources.",
+      "epss": {
+        "score": 0.00234
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202438828-008",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 7.5,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2024-38828/",
+          "https://spring.io/security/"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.springframework/spring-webmvc/CVE-2024-38828/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "HIGH",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2024-38828",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/spring-webmvc-5.3.31.jar",
+            "fixedInVersion": "5.3.42",
+            "name": "org.springframework:spring-webmvc",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "5.3.31"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.springframework:spring-webmvc to version 5.3.42 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "HIGH",
+      "status": "ACTIVE",
+      "title": "CVE-2024-38828 - org.springframework:spring-webmvc",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "A critical vulnerability exists in Apache Tomcat affecting versions 9.0.92 through 9.0.116. This vulnerability can lead to remote code execution or significant security compromise of the application server.",
+      "epss": {
+        "score": 0.00456
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202634500-009",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 9.8,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://nvd.nist.gov/vuln/detail/CVE-2026-34500",
+          "https://tomcat.apache.org/security-9.html"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-34500",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "CRITICAL",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2026-34500",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/tomcat-embed-core-9.0.116.jar",
+            "fixedInVersion": "9.0.117",
+            "name": "org.apache.tomcat.embed:tomcat-embed-core",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "9.0.116"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.apache.tomcat.embed:tomcat-embed-core to version 9.0.117 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "CRITICAL",
+      "status": "ACTIVE",
+      "title": "CVE-2026-34500 - org.apache.tomcat.embed:tomcat-embed-core",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Improper encoding or escaping of output vulnerability in the JsonAccessLogValve component of Apache Tomcat. This can lead to log injection attacks and potential information disclosure.",
+      "epss": {
+        "score": 0.00078
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202634483-010",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 6.1,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat/CVE-2026-34483/",
+          "https://tomcat.apache.org/security-9.html"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat/CVE-2026-34483/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "MEDIUM",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2026-34483",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/tomcat-embed-core-9.0.116.jar",
+            "fixedInVersion": "9.0.117",
+            "name": "org.apache.tomcat.embed:tomcat-embed-core",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "9.0.116"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.apache.tomcat.embed:tomcat-embed-core to version 9.0.117 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "MEDIUM",
+      "status": "ACTIVE",
+      "title": "CVE-2026-34483 - org.apache.tomcat.embed:tomcat-embed-core",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Apache Tomcat contains an open redirect vulnerability affecting versions 9.0.0.M23 through 9.0.115. Attackers can craft malicious URLs to redirect users to untrusted sites, potentially facilitating phishing attacks.",
+      "epss": {
+        "score": 0.00123
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202625854-011",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 7.4,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:N/I:H/A:N",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat-catalina/CVE-2026-25854/",
+          "https://tomcat.apache.org/security-9.html"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat-catalina/CVE-2026-25854/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "HIGH",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2026-25854",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/tomcat-embed-core-9.0.116.jar",
+            "fixedInVersion": "9.0.116",
+            "name": "org.apache.tomcat.embed:tomcat-embed-core",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "9.0.116"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.apache.tomcat.embed:tomcat-embed-core to version 9.0.116 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "HIGH",
+      "status": "ACTIVE",
+      "title": "CVE-2026-25854 - org.apache.tomcat.embed:tomcat-embed-core",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Apache Tomcat is vulnerable to HTTP request/response smuggling attacks. This can allow attackers to bypass security controls, poison caches, and perform unauthorized actions by manipulating HTTP message boundaries.",
+      "epss": {
+        "score": 0.03456
+      },
+      "exploitAvailable": "YES",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202624880-012",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 9.1,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat/CVE-2026-24880/",
+          "https://tomcat.apache.org/security-9.html"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat/CVE-2026-24880/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "CRITICAL",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2026-24880",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/tomcat-embed-core-9.0.116.jar",
+            "fixedInVersion": "9.0.116",
+            "name": "org.apache.tomcat.embed:tomcat-embed-core",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "9.0.116"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.apache.tomcat.embed:tomcat-embed-core to version 9.0.116 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "CRITICAL",
+      "status": "ACTIVE",
+      "title": "CVE-2026-24880 - org.apache.tomcat.embed:tomcat-embed-core",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Apache Tomcat Coyote component is vulnerable to Denial of Service attacks through excessive HTTP/2 stream creation. Attackers can exhaust server resources by opening numerous HTTP/2 streams.",
+      "epss": {
+        "score": 0.00189
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202553506-013",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 7.5,
+            "scoringVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://github.com/advisories/GHSA-25xr-qj8w-c4vf",
+          "https://tomcat.apache.org/security-9.html"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://github.com/advisories/GHSA-25xr-qj8w-c4vf",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "HIGH",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2025-53506",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/tomcat-embed-core-9.0.116.jar",
+            "fixedInVersion": "9.0.107",
+            "name": "org.apache.tomcat.embed:tomcat-embed-core",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "9.0.116"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.apache.tomcat.embed:tomcat-embed-core to version 9.0.107 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "HIGH",
+      "status": "ACTIVE",
+      "title": "CVE-2025-53506 - org.apache.tomcat.embed:tomcat-embed-core",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    },
+    {
+      "awsAccountId": "123456789012",
+      "description": "Improper input validation vulnerability in Apache Tomcat due to an incomplete fix of CVE-2025-66614. This may allow attackers to bypass certain security controls through crafted input.",
+      "epss": {
+        "score": 0.00034
+      },
+      "exploitAvailable": "NO",
+      "exploitabilityDetails": {},
+      "findingArn": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202632990-014",
+      "firstObservedAt": "2026-05-08T10:30:00.000Z",
+      "fixAvailable": "YES",
+      "lastObservedAt": "2026-05-08T10:30:00.000Z",
+      "packageVulnerabilityDetails": {
+        "cvss": [
+          {
+            "baseScore": 3.7,
+            "scoringVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N",
+            "source": "NVD",
+            "version": "3.1"
+          }
+        ],
+        "referenceUrls": [
+          "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat/CVE-2026-32990/",
+          "https://tomcat.apache.org/security-9.html"
+        ],
+        "relatedVulnerabilities": [],
+        "source": "NVD",
+        "sourceUrl": "https://advisories.gitlab.com/maven/org.apache.tomcat/tomcat/CVE-2026-32990/",
+        "vendorCreatedAt": "2025-01-15T10:00:00Z",
+        "vendorSeverity": "LOW",
+        "vendorUpdatedAt": "2026-04-20T08:30:00Z",
+        "vulnerabilityId": "CVE-2026-32990",
+        "vulnerablePackages": [
+          {
+            "epoch": 0,
+            "filePath": "/app/vulnerable-demo-1.0.0.jar/BOOT-INF/lib/tomcat-embed-core-9.0.116.jar",
+            "fixedInVersion": "9.0.117",
+            "name": "org.apache.tomcat.embed:tomcat-embed-core",
+            "packageManager": "JAVA",
+            "sourceLayerHash": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "version": "9.0.116"
+          }
+        ]
+      },
+      "remediation": {
+        "appliedActions": [],
+        "recommendation": {
+          "text": "Upgrade org.apache.tomcat.embed:tomcat-embed-core to version 9.0.117 or later"
+        }
+      },
+      "resources": [
+        {
+          "details": {
+            "awsEcrContainerImage": {
+              "architecture": "amd64",
+              "imageHash": "sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+              "imageTags": [
+                "1.0.0",
+                "latest"
+              ],
+              "inUseCount": 1,
+              "lastInUseAt": "2026-05-08T10:30:00.000Z",
+              "platform": "ALPINE_LINUX_3_23",
+              "pushedAt": "2026-05-08T09:00:00.000Z",
+              "registry": "123456789012",
+              "repositoryName": "vulnerable-demo"
+            }
+          },
+          "id": "arn:aws:ecr:us-east-1:123456789012:repository/vulnerable-demo/sha256:79cd8efdf2953d297798ce912bcbdcb9bcb101d51eb45a657a185ac0a13fc65f",
+          "partition": "aws",
+          "region": "us-east-1",
+          "tags": {},
+          "type": "AWS_ECR_CONTAINER_IMAGE"
+        }
+      ],
+      "severity": "LOW",
+      "status": "ACTIVE",
+      "title": "CVE-2026-32990 - org.apache.tomcat.embed:tomcat-embed-core",
+      "type": "PACKAGE_VULNERABILITY",
+      "updatedAt": "2026-05-08T10:30:00.000Z"
+    }
+  ]
+}
