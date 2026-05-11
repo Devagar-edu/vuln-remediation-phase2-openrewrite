@@ -1,28 +1,50 @@
 # Jira Integration Troubleshooting Guide
 
-## Common Error: Malformed URL
+## Understanding the JIRA Python Library
 
-### Error Message
+The JIRA Python library **automatically** calls `/rest/api/2/serverInfo` when you initialize it to verify the connection. This is why you cannot include API paths in the `JIRA_URL`.
+
+### How It Works
+
+```python
+# When you do this:
+JIRA(server="https://domain.atlassian.net")
+
+# The library automatically calls:
+# 1. https://domain.atlassian.net/rest/api/2/serverInfo (to verify connection)
+# 2. https://domain.atlassian.net/rest/api/2/issue (to create issues)
+# 3. https://domain.atlassian.net/rest/api/2/issue/{key}/attachments (to add attachments)
 ```
-"No endpoint GET /rest/api/3/issue/rest/api/2/serverInfo"
+
+### Why Your URL Was Failing
+
+```python
+# If you set:
+JIRA_URL=https://domain.atlassian.net/rest/api/3/issue/
+
+# The library tries to call:
+# https://domain.atlassian.net/rest/api/3/issue/rest/api/2/serverInfo
+#                                              ^^^^^^^^^^^^^^^^^^^^
+#                                              Library appends this
+# Result: 404 Not Found
 ```
 
-### Root Cause
-The `JIRA_URL` environment variable contains API paths that the JIRA library automatically adds, causing a double path like:
-- `/rest/api/3/issue/rest/api/2/serverInfo` (WRONG)
+## Solution
 
-### Solution
+### ✅ Correct JIRA_URL Format
 
-#### ✅ Correct JIRA_URL Format
+**Use the BASE URL only:**
 ```bash
-# Correct - Base URL only
 JIRA_URL=https://your-domain.atlassian.net
-
-# Correct - With trailing slash (will be stripped)
-JIRA_URL=https://your-domain.atlassian.net/
 ```
 
-#### ❌ Incorrect JIRA_URL Format
+The JIRA library will automatically:
+- Use `/rest/api/2/` for most operations (default)
+- Use `/rest/api/3/` for newer features (when needed)
+- Handle all API path construction
+
+### ❌ Incorrect JIRA_URL Format
+
 ```bash
 # Wrong - Contains API path
 JIRA_URL=https://your-domain.atlassian.net/rest/api/2
@@ -30,8 +52,8 @@ JIRA_URL=https://your-domain.atlassian.net/rest/api/2
 # Wrong - Contains API path
 JIRA_URL=https://your-domain.atlassian.net/rest/api/3
 
-# Wrong - Contains serverInfo endpoint
-JIRA_URL=https://your-domain.atlassian.net/rest/api/2/serverInfo
+# Wrong - Contains specific endpoint
+JIRA_URL=https://your-domain.atlassian.net/rest/api/3/issue/
 ```
 
 ### Fix Applied
