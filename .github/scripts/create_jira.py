@@ -18,19 +18,14 @@ def connect_jira():
     """
     Connect to Jira using environment variables.
     
-    The JIRA_URL should be the base URL only (e.g., https://your-domain.atlassian.net)
-    without any API paths like /rest/api/2 or /rest/api/3.
+    JIRA_URL can be:
+    - Base URL: https://your-domain.atlassian.net
+    - With API path: https://your-domain.atlassian.net/rest/api/3/issue/
     
     Returns:
         JIRA client instance
     """
     jira_url = os.environ.get('JIRA_URL', '').rstrip('/')
-    
-    # Remove any API paths if accidentally included in JIRA_URL
-    # The JIRA library will add the correct API path automatically
-    if '/rest/api' in jira_url:
-        # Extract base URL before /rest/api
-        jira_url = jira_url.split('/rest/api')[0]
     
     print(f"Connecting to Jira at: {jira_url}")
     
