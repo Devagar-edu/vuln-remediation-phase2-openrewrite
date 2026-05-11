@@ -3,12 +3,6 @@ name: AI Security Remediation
 on:
   repository_dispatch:
     types: [jira-remediation]
-  workflow_dispatch:
-    inputs:
-      scan_json_file:
-        description: 'Path to normalized scan JSON file (Snyk or Inspector format)'
-        required: true
-        type: string
 
 jobs:
   remediation:
@@ -36,23 +30,9 @@ jobs:
         run: pip install -r requirements.txt
 
       # -------------------------------
-      # Load scan JSON - either from manual input or Jira attachment
-      # -------------------------------
-      - name: Load Scan JSON (Manual Trigger)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          if [ ! -f "${{ inputs.scan_json_file }}" ]; then
-            echo "Error: Scan JSON file not found: ${{ inputs.scan_json_file }}"
-            exit 1
-          fi
-          echo "Using provided scan file: ${{ inputs.scan_json_file }}"
-          cp "${{ inputs.scan_json_file }}" snyk.json
-
-      # -------------------------------
-      # Fetch Jira Attachment (only for repository_dispatch trigger)
+      # NEW: Fetch Jira Attachment
       # -------------------------------
       - name: Get Jira Issue Details
-        if: github.event_name == 'repository_dispatch'
         run: |
           curl -s \
             -u "${{ secrets.JIRA_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
@@ -61,7 +41,6 @@ jobs:
             > issue.json
 
       - name: Extract Attachment URL
-        if: github.event_name == 'repository_dispatch'
         run: |
           ATTACH_URL=$(jq -r '
             .fields.attachment[]
@@ -72,7 +51,6 @@ jobs:
           echo "ATTACH_URL=$ATTACH_URL" >> $GITHUB_ENV
 
       - name: Download Snyk Report or Fallback
-        if: github.event_name == 'repository_dispatch'
         run: |
           if [ -z "$ATTACH_URL" ] || [ "$ATTACH_URL" == "null" ]; then
             echo "No attachment found. Running Snyk scan..."
@@ -88,11 +66,7 @@ jobs:
       # ── Create fix branch ────────────────────────────────────────────────
       - name: Create Fix Branch
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            BRANCH="security/fix-manual-${{ github.run_id }}"
-          else
-            BRANCH="security/fix-$ISSUE_KEY-${{ github.run_id }}"
-          fi
+          BRANCH="security/fix-$ISSUE_KEY-${{ github.run_id }}"
           git checkout -b "$BRANCH"
           echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
