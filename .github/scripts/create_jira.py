@@ -18,18 +18,19 @@ def connect_jira():
     """
     Connect to Jira using environment variables.
     
-    The JIRA library will automatically detect and use the appropriate API version.
-    Ensures we use only the base URL without any /rest/api paths.
+    Forces API v3 since Jira Cloud permissions are configured for v3.
     """
     jira_url = os.environ.get('JIRA_URL', '').rstrip('/')
     
-    # Strip any /rest/api/* paths - JIRA library adds these automatically
+    # Strip any /rest/api/* paths - we'll specify the version explicitly
     if '/rest/api' in jira_url:
         jira_url = jira_url.split('/rest/api')[0]
     
+    # Force API v3 - Jira Cloud uses v3, and permissions are configured there
     return JIRA(
         server=jira_url,
-        basic_auth=(os.environ.get("JIRA_EMAIL"), os.environ.get("JIRA_API_TOKEN"))
+        basic_auth=(os.environ.get("JIRA_EMAIL"), os.environ.get("JIRA_API_TOKEN")),
+        options={'rest_api_version': '3'}
     )
 
 
