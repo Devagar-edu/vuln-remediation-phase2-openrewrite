@@ -15,6 +15,11 @@ def safe_path(user_input):
 
 
 def connect_jira():
+    """
+    Connect to Jira using environment variables.
+    
+    The JIRA library will automatically detect and use the appropriate API version.
+    """
     return JIRA(
         server=os.environ.get('JIRA_URL'),
         basic_auth=(os.environ.get("JIRA_EMAIL"), os.environ.get("JIRA_API_TOKEN"))
