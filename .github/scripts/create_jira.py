@@ -19,9 +19,16 @@ def connect_jira():
     Connect to Jira using environment variables.
     
     The JIRA library will automatically detect and use the appropriate API version.
+    Ensures we use only the base URL without any /rest/api paths.
     """
+    jira_url = os.environ.get('JIRA_URL', '').rstrip('/')
+    
+    # Strip any /rest/api/* paths - JIRA library adds these automatically
+    if '/rest/api' in jira_url:
+        jira_url = jira_url.split('/rest/api')[0]
+    
     return JIRA(
-        server=os.environ.get('JIRA_URL'),
+        server=jira_url,
         basic_auth=(os.environ.get("JIRA_EMAIL"), os.environ.get("JIRA_API_TOKEN"))
     )
 
