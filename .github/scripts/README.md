@@ -38,12 +38,23 @@ This directory contains the implementation scripts and documentation for the AWS
    - Field-by-field comparison
    - Remediation pipeline compatibility analysis
 
-2. **[Static Mapping Validation](STATIC_MAPPING_VALIDATION.md)**
+2. **[AI-Powered Dependency Upgrades](AI_DEPENDENCY_UPGRADE_GUIDE.md)** 🤖
+   - **NEW** - AI validates versions against Maven Central
+   - Prevents build failures from non-existent versions
+   - Intelligent version selection with compatibility analysis
+   - Automatic correction of invalid scanner suggestions
+
+3. **[Static Mapping Validation](STATIC_MAPPING_VALIDATION.md)**
    - Validates all static mappings (package managers, severity levels, file extensions)
    - Risk assessment for each mapping
    - No critical issues found
 
-3. **[Inspector Workflow Correction Summary](INSPECTOR_WORKFLOW_CORRECTION_SUMMARY.md)**
+4. **[Project Structure Validation](PROJECT_STRUCTURE_VALIDATION.md)**
+   - Validates scripts work with updated project structure
+   - Dynamic path resolution verification
+   - No breaking changes detected
+
+5. **[Inspector Workflow Correction Summary](INSPECTOR_WORKFLOW_CORRECTION_SUMMARY.md)**
    - Documents the correction to match Snyk workflow pattern
    - Explains why Inspector workflow should NOT trigger remediation directly
    - Jira-centric workflow pattern
