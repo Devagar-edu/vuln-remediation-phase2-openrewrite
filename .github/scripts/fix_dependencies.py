@@ -9,10 +9,7 @@ import os
 
 
 BASE_DIR = os.getcwd()
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
-
-if not GITHUB_TOKEN:
-    raise ValueError("GITHUB_TOKEN environment variable not set")
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")  # Optional - only needed for AI features
 
 MAX_RETRIES = 3
 
@@ -110,6 +107,16 @@ def ai_suggest_safe_version(group_id, artifact_id, current_version, suggested_ve
     Returns:
         str: Recommended version to upgrade to, or None if no safe upgrade found
     """
+    # Check if GITHUB_TOKEN is available for AI features
+    if not GITHUB_TOKEN:
+        print(f"  ⚠ GITHUB_TOKEN not set - falling back to newest stable version")
+        # Fall back to newest stable version without AI
+        for v in available_versions:
+            if not any(x in v.lower() for x in ['alpha', 'beta', 'rc', 'snapshot', 'm1', 'm2']):
+                print(f"  ✓ Selected newest stable version: {v}")
+                return v
+        return None
+    
     print(f"  → AI analyzing safe upgrade path for {group_id}:{artifact_id}...")
     
     available_versions_str = ", ".join(available_versions[:20]) if available_versions else "None found"
@@ -175,6 +182,11 @@ def ai_suggest_safe_version(group_id, artifact_id, current_version, suggested_ve
             
     except Exception as e:
         print(f"  ✗ AI version suggestion failed: {e}")
+        # Fall back to newest stable version
+        for v in available_versions:
+            if not any(x in v.lower() for x in ['alpha', 'beta', 'rc', 'snapshot', 'm1', 'm2']):
+                print(f"  ✓ Falling back to newest stable: {v}")
+                return v
         return None
 
 
