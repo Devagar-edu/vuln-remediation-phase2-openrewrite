@@ -1,0 +1,240 @@
+{
+  "scan_metadata": {
+    "scanner": "inspector",
+    "project": "unknown",
+    "repository": "unknown",
+    "branch": "main",
+    "commit": "unknown",
+    "scan_time": "2026-05-18T15:36:54.010359",
+    "findings_count": 14
+  },
+  "dependency_vulnerabilities": [
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202524970-001",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "io.netty:netty-handler",
+      "current_version": "4.1.115.Final",
+      "fixed_version": "4.1.118.Final",
+      "severity": "critical",
+      "cve": [
+        "CVE-2025-24970"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "dependency",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": false,
+        "recommended_action": "DEPENDENCY_UPGRADE_ONLY"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202447535-002",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "io.netty:netty-handler",
+      "current_version": "4.1.115.Final",
+      "fixed_version": "4.1.118.Final",
+      "severity": "medium",
+      "cve": [
+        "CVE-2024-47535"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "dependency",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": false,
+        "recommended_action": "DEPENDENCY_UPGRADE_ONLY"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202622735-004",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "org.springframework:spring-webmvc",
+      "current_version": "5.3.31",
+      "fixed_version": "6.1.8",
+      "severity": "high",
+      "cve": [
+        "CVE-2026-22735"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "java-modernization",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": true,
+        "minimum_java_version": "17",
+        "recommended_action": "SPRING6_MIGRATION",
+        "required_framework_upgrade": "Spring Boot 3.x",
+        "breaking_changes_expected": true,
+        "openrewrite_recipe": "org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202622737-005",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "org.springframework:spring-webmvc",
+      "current_version": "5.3.31",
+      "fixed_version": "6.1.8",
+      "severity": "medium",
+      "cve": [
+        "CVE-2026-22737"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "java-modernization",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": true,
+        "minimum_java_version": "17",
+        "recommended_action": "SPRING6_MIGRATION",
+        "required_framework_upgrade": "Spring Boot 3.x",
+        "breaking_changes_expected": true,
+        "openrewrite_recipe": "org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202541242-006",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "org.springframework:spring-webmvc",
+      "current_version": "5.3.31",
+      "fixed_version": "6.1.8",
+      "severity": "medium",
+      "cve": [
+        "CVE-2025-41242"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "java-modernization",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": true,
+        "minimum_java_version": "17",
+        "recommended_action": "SPRING6_MIGRATION",
+        "required_framework_upgrade": "Spring Boot 3.x",
+        "breaking_changes_expected": true,
+        "openrewrite_recipe": "org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202438816-007",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "org.springframework:spring-webmvc",
+      "current_version": "5.3.31",
+      "fixed_version": "6.1.8",
+      "severity": "high",
+      "cve": [
+        "CVE-2024-38816"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "java-modernization",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": true,
+        "minimum_java_version": "17",
+        "recommended_action": "SPRING6_MIGRATION",
+        "required_framework_upgrade": "Spring Boot 3.x",
+        "breaking_changes_expected": true,
+        "openrewrite_recipe": "org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202438828-008",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "org.springframework:spring-webmvc",
+      "current_version": "5.3.31",
+      "fixed_version": "6.1.8",
+      "severity": "high",
+      "cve": [
+        "CVE-2024-38828"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "java-modernization",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": true,
+        "minimum_java_version": "17",
+        "recommended_action": "SPRING6_MIGRATION",
+        "required_framework_upgrade": "Spring Boot 3.x",
+        "breaking_changes_expected": true,
+        "openrewrite_recipe": "org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202634500-009",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "org.apache.tomcat.embed:tomcat-embed-core",
+      "current_version": "9.0.116",
+      "fixed_version": "10.1.31",
+      "severity": "critical",
+      "cve": [
+        "CVE-2026-34500"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "java-modernization",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": true,
+        "minimum_java_version": "17",
+        "recommended_action": "TOMCAT10_MIGRATION",
+        "jakarta_migration_required": true,
+        "breaking_changes_expected": true,
+        "openrewrite_recipe": "org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta"
+      }
+    },
+    {
+      "id": "arn:aws:inspector2:us-east-1:123456789012:finding/cve202634483-010",
+      "scanner": "inspector",
+      "package_manager": "java",
+      "package_name": "org.apache.tomcat.embed:tomcat-embed-core",
+      "current_version": "9.0.116",
+      "fixed_version": "10.1.31",
+      "severity": "medium",
+      "cve": [
+        "CVE-2026-34483"
+      ],
+      "manifest_file": "pom.xml",
+      "remediation_type": "java-modernization",
+      "repository": "vulnerable-demo",
+      "branch": "main",
+      "commit_id": "unknown",
+      "scan_time": "2026-05-18T15:36:53.996103",
+      "ai_recommendation": {
+        "requires_java_upgrade": true,
+        "minimum_java_version": "17",
+        "recommended_action": "TOMCAT10_MIGRATION",
+        "jakarta_migration_required": true,
+        "breaking_changes_expected": true,
+        "openrewrite_recipe": "org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta"
+      }
+    }
+  ],
+  "code_vulnerabilities": []
+}

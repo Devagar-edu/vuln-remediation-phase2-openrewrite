@@ -97,10 +97,107 @@ jobs:
           echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
       # -------------------------------
-      # Process  and fix vulnerabilities
+      # AI Java Version Upgrade Analysis
+      # -------------------------------
+      - name: Analyze Java Version Upgrade Recommendation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "════════════════════════════════════════════"
+          echo "🤖 AI Java Upgrade Analysis"
+          echo "════════════════════════════════════════════"
+          python .github/scripts/analyze_java_upgrade.py snyk.json pom.xml src/
+          
+          if [ -f "java_upgrade_recommendation.json" ]; then
+            echo "✓ Analysis complete"
+            cat java_upgrade_recommendation.json
+            
+            # Extract recommendation
+            RECOMMENDATION=$(jq -r '.recommendation' java_upgrade_recommendation.json)
+            echo "JAVA_UPGRADE_RECOMMENDATION=$RECOMMENDATION" >> $GITHUB_ENV
+            echo ""
+            echo "Recommendation: $RECOMMENDATION"
+          else
+            echo "⚠ Analysis failed, proceeding with current Java version"
+            echo "JAVA_UPGRADE_RECOMMENDATION=STAY_JAVA_8" >> $GITHUB_ENV
+          fi
+
+      # -------------------------------
+      # Generate OpenRewrite Recipe (conditional)
+      # -------------------------------
+      - name: Generate OpenRewrite Recipe
+        if: env.JAVA_UPGRADE_RECOMMENDATION != 'STAY_JAVA_8'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "════════════════════════════════════════════"
+          echo "🔧 Generating OpenRewrite Recipe"
+          echo "════════════════════════════════════════════"
+          python .github/scripts/generate_openrewrite_recipe.py \
+            java_upgrade_recommendation.json \
+            pom.xml \
+            src/
+          
+          if [ -f "rewrite.yml" ]; then
+            echo "✓ Recipe generated"
+            cat rewrite.yml
+          else
+            echo "✗ Recipe generation failed"
+            exit 1
+          fi
+
+      # -------------------------------
+      # Execute OpenRewrite Migration (conditional)
+      # -------------------------------
+      - name: Execute OpenRewrite Migration
+        if: env.JAVA_UPGRADE_RECOMMENDATION != 'STAY_JAVA_8'
+        run: |
+          echo "════════════════════════════════════════════"
+          echo "🚀 Executing OpenRewrite Transformations"
+          echo "════════════════════════════════════════════"
+          mvn org.openrewrite.maven:rewrite-maven-plugin:run \
+            2>&1 | tee openrewrite_execution.log
+          
+          if grep -q "BUILD SUCCESS" openrewrite_execution.log; then
+            echo "✅ OpenRewrite execution successful"
+            
+            # Count modified files
+            MODIFIED_COUNT=$(git diff --name-only | wc -l)
+            echo "Modified $MODIFIED_COUNT files"
+          else
+            echo "❌ OpenRewrite execution failed"
+            cat openrewrite_execution.log
+            exit 1
+          fi
+
+      # -------------------------------
+      # Update POM Versions (conditional)
+      # -------------------------------
+      - name: Update POM Versions
+        if: env.JAVA_UPGRADE_RECOMMENDATION != 'STAY_JAVA_8'
+        run: |
+          echo "════════════════════════════════════════════"
+          echo "📝 Updating POM Versions"
+          echo "════════════════════════════════════════════"
+          python .github/scripts/update_pom_versions.py \
+            java_upgrade_recommendation.json \
+            pom.xml
+          
+          echo "✓ POM versions updated"
+          echo ""
+          echo "Updated pom.xml:"
+          cat pom.xml
+
+      # -------------------------------
+      # Process and fix vulnerabilities
+      # -------------------------------
+      # Note: When Java upgrade is performed, dependency versions are already
+      # aligned by analyze_java_upgrade.py. Only run fix_dependencies.py when
+      # staying on current Java version.
       # -------------------------------
       
       - name: Fix Dependencies
+        if: env.JAVA_UPGRADE_RECOMMENDATION == 'STAY_JAVA_8'
         run: |
           python .github/scripts/fix_dependencies.py snyk.json pom.xml
 
@@ -205,14 +302,206 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Build PR body with Java upgrade information
+          PR_BODY="## 🤖 AI Security Remediation
+          
+          Automated security remediation with intelligent Java version management.
+          "
+          
+          if [ -f "java_upgrade_recommendation.json" ]; then
+            RECOMMENDATION=$(jq -r '.recommendation' java_upgrade_recommendation.json)
+            TARGET_VERSION=$(jq -r '.target_java_version' java_upgrade_recommendation.json)
+            CONFIDENCE=$(jq -r '.confidence' java_upgrade_recommendation.json)
+            RATIONALE=$(jq -r '.rationale' java_upgrade_recommendation.json)
+            COMPLEXITY=$(jq -r '.migration_complexity' java_upgrade_recommendation.json)
+            
+            PR_BODY="$PR_BODY
+          
+          ### 📊 Java Upgrade Analysis
+          
+          - **Recommendation**: \`$RECOMMENDATION\`
+          - **Target Version**: Java $TARGET_VERSION
+          - **Confidence**: $(printf '%.0f%%' $(echo "$CONFIDENCE * 100" | bc))
+          - **Migration Complexity**: $COMPLEXITY
+          - **Rationale**: $RATIONALE
+          "
+            
+            if [ "$RECOMMENDATION" != "STAY_JAVA_8" ]; then
+              VULN_COUNT=$(jq '.vulnerabilities_requiring_upgrade | length' java_upgrade_recommendation.json)
+              TOTAL_VULN_COUNT=$(jq '.all_vulnerabilities_addressed | length' java_upgrade_recommendation.json)
+              
+              PR_BODY="$PR_BODY
+          
+          ### 🔧 Migration Details
+          
+          - **Vulnerabilities requiring upgrade**: $VULN_COUNT
+          - **Total vulnerabilities addressed**: $TOTAL_VULN_COUNT
+          - **OpenRewrite recipes applied**: See \`rewrite.yml\`
+          - **Execution logs**: See workflow artifacts
+          "
+            fi
+          fi
+          
+          PR_BODY="$PR_BODY
+          
+          ### 📝 Changes
+          
+          - Dependency updates
+          - Code transformations (if Java upgrade)
+          - Build error fixes
+          - Security vulnerability fixes
+          
+          ---
+          
+          🤖 Generated by AI Security Remediation Workflow
+          "
+          
           PR_URL=$(gh pr create \
-            --title "AI Security Remediation" \
-            --body "Automated security remediation." \
+            --title "🔒 AI Security Remediation - $(date +'%Y-%m-%d')" \
+            --body "$PR_BODY" \
             --base main \
             --head $BRANCH)
 
           PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
           echo "PR=$PR_NUMBER" >> $GITHUB_ENV
+          echo "✓ Pull Request created: $PR_URL"
+
+      # -------------------------------
+      # Upload Artifacts
+      # -------------------------------
+      - name: Upload Java Upgrade Analysis Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-upgrade-analysis
+          path: |
+            java_upgrade_recommendation.json
+            rewrite.yml
+            openrewrite_execution.log
+            build.log
+          if-no-files-found: ignore
+
+      - name: Upload Build Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build.log
+            openrewrite_execution.log
+          if-no-files-found: ignore
+
+      # -------------------------------
+      # Generate Workflow Summary
+      # -------------------------------
+      - name: Generate Workflow Summary
+        if: always()
+        run: |
+          {
+            echo "# 🤖 AI Security Remediation Summary"
+            echo ""
+            echo "## 📊 Java Upgrade Analysis"
+            echo ""
+            
+            if [ -f "java_upgrade_recommendation.json" ]; then
+              RECOMMENDATION=$(jq -r '.recommendation' java_upgrade_recommendation.json)
+              TARGET_VERSION=$(jq -r '.target_java_version' java_upgrade_recommendation.json)
+              CURRENT_VERSION=$(jq -r '.current_java_version' java_upgrade_recommendation.json)
+              CONFIDENCE=$(jq -r '.confidence' java_upgrade_recommendation.json)
+              RATIONALE=$(jq -r '.rationale' java_upgrade_recommendation.json)
+              COMPLEXITY=$(jq -r '.migration_complexity' java_upgrade_recommendation.json)
+              VULN_UPGRADE=$(jq '.vulnerabilities_requiring_upgrade | length' java_upgrade_recommendation.json)
+              VULN_TOTAL=$(jq '.all_vulnerabilities_addressed | length' java_upgrade_recommendation.json)
+              
+              echo "| Metric | Value |"
+              echo "|--------|-------|"
+              echo "| **Recommendation** | \`$RECOMMENDATION\` |"
+              echo "| **Current Java Version** | $CURRENT_VERSION |"
+              echo "| **Target Java Version** | $TARGET_VERSION |"
+              echo "| **Confidence** | $(printf '%.0f%%' $(echo "$CONFIDENCE * 100" | bc)) |"
+              echo "| **Migration Complexity** | $COMPLEXITY |"
+              echo "| **Vulnerabilities Requiring Upgrade** | $VULN_UPGRADE |"
+              echo "| **Total Vulnerabilities Addressed** | $VULN_TOTAL |"
+              echo ""
+              echo "**Rationale**: $RATIONALE"
+              echo ""
+              
+              if [ "$RECOMMENDATION" != "STAY_JAVA_8" ]; then
+                echo "## 🔧 Migration Actions Taken"
+                echo ""
+                echo "1. ✅ Generated OpenRewrite recipe"
+                echo "2. ✅ Executed code transformations"
+                echo "3. ✅ Updated POM versions"
+                echo "4. ✅ Fixed build errors"
+                echo ""
+                
+                if [ -f "rewrite.yml" ]; then
+                  RECIPE_COUNT=$(yq '.recipeList | length' rewrite.yml 2>/dev/null || echo "N/A")
+                  echo "**OpenRewrite Recipes Applied**: $RECIPE_COUNT"
+                  echo ""
+                fi
+                
+                if [ -f "openrewrite_execution.log" ]; then
+                  MODIFIED_FILES=$(git diff --name-only | wc -l)
+                  echo "**Files Modified by OpenRewrite**: $MODIFIED_FILES"
+                  echo ""
+                fi
+              else
+                echo "## ℹ️ No Java Upgrade Required"
+                echo ""
+                echo "All vulnerabilities can be fixed in the current Java version."
+                echo ""
+              fi
+              
+              echo "## 📋 Vulnerability Details"
+              echo ""
+              echo "### Vulnerabilities Requiring Upgrade"
+              echo ""
+              
+              if [ "$VULN_UPGRADE" -gt 0 ]; then
+                echo "| CVE | Package | Current | Fixed | Min Java | Severity |"
+                echo "|-----|---------|---------|-------|----------|----------|"
+                jq -r '.vulnerabilities_requiring_upgrade[] | 
+                  "| \(.cve) | \(.package) | \(.current_version) | \(.fixed_version) | \(.min_java_version) | \(.severity) |"' \
+                  java_upgrade_recommendation.json
+              else
+                echo "_No vulnerabilities require Java upgrade_"
+              fi
+              
+              echo ""
+              echo "### All Vulnerabilities Addressed"
+              echo ""
+              echo "| CVE | Package | Current | Fixed | Min Java | Severity |"
+              echo "|-----|---------|---------|-------|----------|----------|"
+              jq -r '.all_vulnerabilities_addressed[] | 
+                "| \(.cve) | \(.package) | \(.current_version) | \(.fixed_version) | \(.min_java_version) | \(.severity) |"' \
+                java_upgrade_recommendation.json | head -10
+              
+              if [ "$VULN_TOTAL" -gt 10 ]; then
+                echo ""
+                echo "_Showing first 10 of $VULN_TOTAL vulnerabilities. See \`java_upgrade_recommendation.json\` for full list._"
+              fi
+            else
+              echo "⚠️ Java upgrade analysis was not performed or failed."
+            fi
+            
+            echo ""
+            echo "## 🔗 Links"
+            echo ""
+            
+            if [ -n "$PR" ]; then
+              PR_URL="https://github.com/${{ github.repository }}/pull/$PR"
+              echo "- 🔀 **Pull Request**: [#$PR]($PR_URL)"
+            fi
+            
+            echo "- 📦 **Artifacts**: Check workflow artifacts for detailed logs"
+            echo "- 🏃 **Workflow Run**: [${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo ""
+            echo "---"
+            echo ""
+            echo "_Generated by AI Security Remediation Workflow_"
+            
+          } >> $GITHUB_STEP_SUMMARY
 
 
 #      - name: Mechanical Code Fixes (OpenRewrite)

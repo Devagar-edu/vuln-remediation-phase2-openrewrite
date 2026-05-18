@@ -17,7 +17,7 @@ Design:
   - Writes fix_build_errors_report.txt summarising results
 
 Usage:
-    python fix_build_errors.py build1.log
+    python fix_build_errors.py build.log pom.xml src/
 """
 
 import json
@@ -31,41 +31,86 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 if not GITHUB_TOKEN:
     raise ValueError("GITHUB_TOKEN environment variable not set")
 
-BASE_DIR = os.getcwd()
-
-def safe_path(user_input):
-    """Allow only filenames, force them into BASE_DIR to prevent traversal"""
-    filename = os.path.basename(user_input)
-    return os.path.join(BASE_DIR, filename)
-
-BUILD_LOG = safe_path(sys.argv[1])
-
-
 AI_ENDPOINT  = "https://models.github.ai/inference/chat/completions"
 AI_MODEL     = "gpt-4o-mini"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Parse build log → { file_path: [ "Line N: error message", ... ] }
+# Parse build log → list of error dictionaries
 # ─────────────────────────────────────────────────────────────────────────────
-def parse_errors(log_file):
-    errors_by_file = defaultdict(list)
+def parse_compilation_errors(build_log):
+    """
+    Extract error messages from Maven build log.
+    
+    Args:
+        build_log (str): Path to build log file
+        
+    Returns:
+        list: List of error dictionaries with keys: file, line, message
+    """
+    errors = []
     pattern = re.compile(r"\[ERROR\]\s+([\w/.\-]+\.java):\[(\d+),\d+\]\s+(.+)")
-    with open(log_file) as f:
+    with open(build_log) as f:
         for line in f:
             m = pattern.match(line.strip())
             if m:
-                errors_by_file[m.group(1)].append(
-                    f"Line {m.group(2)}: {m.group(3).strip()}"
-                )
-    return errors_by_file
+                errors.append({
+                    'file': m.group(1),
+                    'line': m.group(2),
+                    'message': m.group(3).strip()
+                })
+    return errors
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# AI call — one call per file, all errors for that file sent together.
-# System prompt is strictly scoped: fix only what is broken, nothing more.
+# Group errors by file path
 # ─────────────────────────────────────────────────────────────────────────────
-def ai_fix_file(file_path, code, error_lines):
+def group_by_file(errors):
+    """
+    Organize errors by file path.
+    
+    Args:
+        errors (list): List of error dictionaries from parse_compilation_errors
+        
+    Returns:
+        dict: Dictionary mapping file paths to lists of error strings
+    """
+    errors_by_file = defaultdict(list)
+    for error in errors:
+        error_str = f"Line {error['line']}: {error['message']}"
+        errors_by_file[error['file']].append(error_str)
+    return dict(errors_by_file)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Format errors for AI prompt
+# ─────────────────────────────────────────────────────────────────────────────
+def format_errors(file_errors):
+    """
+    Format errors for AI prompt.
+    
+    Args:
+        file_errors (list): List of error strings for a single file
+        
+    Returns:
+        str: Formatted error string for AI prompt
+    """
+    return "\n".join(file_errors)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Call GitHub Models API to generate fix
+# ─────────────────────────────────────────────────────────────────────────────
+def call_github_models_api(prompt):
+    """
+    Call AI for fix generation.
+    
+    Args:
+        prompt (str): The complete prompt for the AI
+        
+    Returns:
+        str: The AI-generated fixed code
+    """
     payload = {
         "model": AI_MODEL,
         "messages": [
@@ -81,20 +126,7 @@ def ai_fix_file(file_path, code, error_lines):
             },
             {
                 "role": "user",
-                "content": (
-                    "This Java file has compile errors introduced by a dependency "
-                    "version upgrade in pom.xml. Fix ONLY those errors.\n\n"
-                    "RULES:\n"
-                    "1. Fix every compile error listed.\n"
-                    "2. Do NOT change any business logic.\n"
-                    "3. Do NOT add, remove, or rename methods, fields, or classes.\n"
-                    "4. Do NOT refactor, modernise, or improve anything.\n"
-                    "5. Do NOT change any line that is not causing a compile error.\n"
-                    "6. The output must compile successfully with the upgraded dependencies.\n\n"
-                    f"COMPILE ERRORS:\n{chr(10).join(error_lines)}\n\n"
-                    f"FILE: {file_path}\n"
-                    f"CONTENT:\n{code}"
-                )
+                "content": prompt
             }
         ]
     }
@@ -113,22 +145,60 @@ def ai_fix_file(file_path, code, error_lines):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Main
+# Generate report summarizing fixes
 # ─────────────────────────────────────────────────────────────────────────────
-def main():
-    print(f"Parsing: {BUILD_LOG}")
-    errors_by_file = parse_errors(BUILD_LOG)
+def generate_report(filename, fixes_applied):
+    """
+    Generate report file summarizing fixes applied.
+    
+    Args:
+        filename (str): Path to report file to generate
+        fixes_applied (list): List of fix result dictionaries
+    """
+    total_files = len([f for f in fixes_applied if f['status'] == 'FIXED'])
+    skipped = len([f for f in fixes_applied if f['status'] in ['SKIPPED_MISSING', 'UNCHANGED']])
+    errors = len([f for f in fixes_applied if f['status'] == 'ERROR'])
+    
+    with open(filename, "w") as f:
+        f.write(f"Files: {len(fixes_applied)} | Fixed: {total_files} | "
+                f"Skipped: {skipped} | Errors: {errors}\n\n")
+        for fix in fixes_applied:
+            f.write(f"{fix['status']}: {fix['file']}")
+            if 'error_count' in fix:
+                f.write(f" ({fix['error_count']} errors)")
+            if 'error_message' in fix:
+                f.write(f" — {fix['error_message']}")
+            f.write("\n")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main function - fix build errors
+# ─────────────────────────────────────────────────────────────────────────────
+def fix_build_errors(build_log, pom_file, src_dir):
+    """
+    Main function to fix build errors.
+    
+    Args:
+        build_log (str): Path to compilation log
+        pom_file (str): Path to pom.xml (for context, not currently used)
+        src_dir (str): Path to source directory (for context, not currently used)
+        
+    Returns:
+        list: List of fix result dictionaries
+    """
+    print(f"Parsing: {build_log}")
+    errors = parse_compilation_errors(build_log)
+    errors_by_file = group_by_file(errors)
 
     if not errors_by_file:
         print("No Java compile errors found — nothing to fix.")
-        return
+        return []
 
     total_files  = len(errors_by_file)
     total_errors = sum(len(v) for v in errors_by_file.values())
     print(f"Found {total_errors} error(s) across {total_files} file(s)\n")
 
-    stats  = {"fixed": 0, "skipped": 0, "errors": 0}
-    report = []
+    fixes_applied = []
 
     for file_path, error_lines in errors_by_file.items():
         print(f"{'─'*60}")
@@ -138,15 +208,36 @@ def main():
 
         if not os.path.isfile(file_path):
             print(f"  SKIP — not found on disk")
-            stats["skipped"] += 1
-            report.append(f"SKIPPED_MISSING: {file_path}")
+            fixes_applied.append({
+                'status': 'SKIPPED_MISSING',
+                'file': file_path,
+                'error_count': len(error_lines)
+            })
             continue
 
         with open(file_path) as f:
             original = f.read()
 
         try:
-            fixed = ai_fix_file(file_path, original, error_lines)
+            # Prepare AI prompt
+            formatted_errors = format_errors(error_lines)
+            prompt = (
+                "This Java file has compile errors introduced by a dependency "
+                "version upgrade in pom.xml. Fix ONLY those errors.\n\n"
+                "RULES:\n"
+                "1. Fix every compile error listed.\n"
+                "2. Do NOT change any business logic.\n"
+                "3. Do NOT add, remove, or rename methods, fields, or classes.\n"
+                "4. Do NOT refactor, modernise, or improve anything.\n"
+                "5. Do NOT change any line that is not causing a compile error.\n"
+                "6. The output must compile successfully with the upgraded dependencies.\n\n"
+                f"COMPILE ERRORS:\n{formatted_errors}\n\n"
+                f"FILE: {file_path}\n"
+                f"CONTENT:\n{original}"
+            )
+            
+            # Call AI to generate fix
+            fixed = call_github_models_api(prompt)
 
             # Strip accidental markdown fences
             if fixed.startswith("```"):
@@ -157,26 +248,49 @@ def main():
                 with open(file_path, "w") as f:
                     f.write(fixed)
                 print(f"  ✅ Fixed")
-                stats["fixed"] += 1
-                report.append(f"FIXED: {file_path} ({len(error_lines)} errors)")
+                fixes_applied.append({
+                    'status': 'FIXED',
+                    'file': file_path,
+                    'error_count': len(error_lines)
+                })
             else:
                 print(f"  ℹ️  No change returned by AI")
-                stats["skipped"] += 1
-                report.append(f"UNCHANGED: {file_path}")
+                fixes_applied.append({
+                    'status': 'UNCHANGED',
+                    'file': file_path,
+                    'error_count': len(error_lines)
+                })
 
         except Exception as e:
             print(f"  ❌ {e}")
-            stats["errors"] += 1
-            report.append(f"ERROR: {file_path} — {e}")
+            fixes_applied.append({
+                'status': 'ERROR',
+                'file': file_path,
+                'error_count': len(error_lines),
+                'error_message': str(e)
+            })
 
-    with open("fix_build_errors_report.txt", "w") as f:
-        f.write(f"Files: {total_files} | Fixed: {stats['fixed']} | "
-                f"Skipped: {stats['skipped']} | Errors: {stats['errors']}\n\n")
-        f.write("\n".join(report))
+    # Generate report
+    generate_report("fix_build_errors_report.txt", fixes_applied)
+
+    fixed_count = len([f for f in fixes_applied if f['status'] == 'FIXED'])
+    skipped_count = len([f for f in fixes_applied if f['status'] in ['SKIPPED_MISSING', 'UNCHANGED']])
+    error_count = len([f for f in fixes_applied if f['status'] == 'ERROR'])
 
     print(f"\n{'═'*60}")
-    print(f"Done. Fixed: {stats['fixed']} | Skipped: {stats['skipped']} | Errors: {stats['errors']}")
+    print(f"Done. Fixed: {fixed_count} | Skipped: {skipped_count} | Errors: {error_count}")
+    
+    return fixes_applied
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 4:
+        print("Usage: python fix_build_errors.py <build_log> <pom_file> <src_dir>")
+        print("Example: python fix_build_errors.py build.log pom.xml src/")
+        sys.exit(1)
+    
+    build_log = sys.argv[1]
+    pom_file = sys.argv[2]
+    src_dir = sys.argv[3]
+    
+    fix_build_errors(build_log, pom_file, src_dir)

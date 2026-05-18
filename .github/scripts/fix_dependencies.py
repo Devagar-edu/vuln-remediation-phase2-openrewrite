@@ -107,9 +107,18 @@ def ai_suggest_safe_version(group_id, artifact_id, current_version, suggested_ve
     Returns:
         str: Recommended version to upgrade to, or None if no safe upgrade found
     """
+    # Extract Java version from POM
+    java_version_match = re.search(r'<java\.version>([\d.]+)</java\.version>', pom_content)
+    java_version = java_version_match.group(1) if java_version_match else "unknown"
+    
+    # Extract Spring Boot version from POM
+    spring_boot_match = re.search(r'<parent>.*?<artifactId>spring-boot-starter-parent</artifactId>.*?<version>([\d.]+)</version>', pom_content, re.DOTALL)
+    spring_boot_version = spring_boot_match.group(1) if spring_boot_match else "unknown"
+    
     # Check if GITHUB_TOKEN is available for AI features
     if not GITHUB_TOKEN:
         print(f"  ⚠ GITHUB_TOKEN not set - falling back to newest stable version")
+        print(f"  ℹ Java version: {java_version}, Spring Boot: {spring_boot_version}")
         # Fall back to newest stable version without AI
         for v in available_versions:
             if not any(x in v.lower() for x in ['alpha', 'beta', 'rc', 'snapshot', 'm1', 'm2']):
@@ -118,6 +127,7 @@ def ai_suggest_safe_version(group_id, artifact_id, current_version, suggested_ve
         return None
     
     print(f"  → AI analyzing safe upgrade path for {group_id}:{artifact_id}...")
+    print(f"  ℹ Constraints: Java {java_version}, Spring Boot {spring_boot_version}")
     
     available_versions_str = ", ".join(available_versions[:20]) if available_versions else "None found"
     
@@ -132,10 +142,14 @@ def ai_suggest_safe_version(group_id, artifact_id, current_version, suggested_ve
                     "1. ONLY recommend versions that exist in the 'Available versions' list\n"
                     "2. Prefer stable releases (avoid alpha, beta, RC, SNAPSHOT)\n"
                     "3. Choose the newest stable version that fixes the vulnerability\n"
-                    "4. If the scanner's suggested version doesn't exist, find the closest stable alternative\n"
-                    "5. Consider Spring Boot compatibility if this is a Spring dependency\n"
-                    "6. Return ONLY the version number (e.g., '2.7.18' or '3.1.5'), nothing else\n"
-                    "7. If no safe upgrade exists, return 'SKIP'\n\n"
+                    "4. RESPECT Java version constraints - if Java 8, avoid versions requiring Java 11+\n"
+                    "5. RESPECT Spring Boot version constraints:\n"
+                    "   - Spring Boot 2.x (Java 8-17): Use Spring Framework 5.3.x, not 6.x\n"
+                    "   - Spring Boot 3.x (Java 17+): Use Spring Framework 6.x\n"
+                    "6. For Spring dependencies, stay within the same major version family\n"
+                    "7. If the scanner's suggested version doesn't exist or is incompatible, find the closest compatible alternative\n"
+                    "8. Return ONLY the version number (e.g., '2.7.18' or '5.3.31'), nothing else\n"
+                    "9. If no safe upgrade exists within compatibility constraints, return 'SKIP'\n\n"
                     "Output format: Just the version number or 'SKIP'"
                 ),
             },
@@ -146,8 +160,11 @@ def ai_suggest_safe_version(group_id, artifact_id, current_version, suggested_ve
                     f"Current version: {current_version or 'unknown'}\n"
                     f"Scanner suggested version: {suggested_version}\n"
                     f"Available versions in Maven Central: {available_versions_str}\n\n"
+                    f"PROJECT CONSTRAINTS:\n"
+                    f"Java version: {java_version}\n"
+                    f"Spring Boot version: {spring_boot_version}\n\n"
                     f"POM context (first 1000 chars):\n{pom_content[:1000]}\n\n"
-                    f"What version should we upgrade to?"
+                    f"What version should we upgrade to that is compatible with Java {java_version} and Spring Boot {spring_boot_version}?"
                 ),
             },
         ],
@@ -164,12 +181,13 @@ def ai_suggest_safe_version(group_id, artifact_id, current_version, suggested_ve
         
         # Validate the recommendation
         if recommendation == "SKIP":
-            print(f"  ✗ AI recommends skipping this upgrade (no safe version found)")
+            print(f"  ✗ AI recommends skipping this upgrade (no compatible version found)")
+            print(f"  ℹ Consider upgrading to Java 11 or 17 to access newer dependency versions")
             return None
         
         # Check if recommended version is in available versions
         if recommendation in available_versions:
-            print(f"  ✓ AI recommends version: {recommendation}")
+            print(f"  ✓ AI recommends version: {recommendation} (compatible with Java {java_version})")
             return recommendation
         else:
             print(f"  ⚠ AI suggested {recommendation} but it's not in available versions")
