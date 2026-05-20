@@ -1,0 +1,11 @@
+type: specs.openrewrite.org/v1beta/recipe
+name: com.example.MigrateToJava17WithSpringBoot3
+displayName: Migrate to Java 17 with Spring Boot 3
+description: Migrates Java 8 code to Java 17 and Spring Boot 3
+recipeList:
+- org.openrewrite.java.migrate.UpgradeToJava17
+- org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta
+- org.openrewrite.java.migrate.jakarta.JavaxPersistenceToJakartaPersistence
+- org.openrewrite.java.migrate.jakarta.JavaxServletToJakartaServlet
+- org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0
+- org.openrewrite.java.spring.boot3.SpringBoot3BestPractices

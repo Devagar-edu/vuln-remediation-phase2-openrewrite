@@ -1,0 +1,7 @@
+/home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/src/main/java/com/example/vulnerable/controller/UserController.java
+/home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/src/main/java/com/example/vulnerable/VulnerableDemoApplication.java
+/home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/src/main/java/com/example/vulnerable/service/UserService.java
+/home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/src/main/java/com/example/vulnerable/model/User.java
+/home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/src/main/java/com/example/vulnerable/controller/HealthController.java
+/home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/src/main/java/com/example/vulnerable/repository/UserRepository.java
+/home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/src/main/java/com/example/vulnerable/controller/DatabaseController.java

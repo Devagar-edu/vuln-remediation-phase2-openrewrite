@@ -1,0 +1,23 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< com.example:vulnerable-demo >---------------------
+[INFO] Building Vulnerable Spring Boot Demo 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ vulnerable-demo ---
+[INFO] Deleting /home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/target
+[INFO] 
+[INFO] --- resources:3.3.0:resources (default-resources) @ vulnerable-demo ---
+[INFO] Copying 2 resources
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ vulnerable-demo ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 7 source files to /home/runner/work/vuln-remediation-phase2-openrewrite/vuln-remediation-phase2-openrewrite/target/classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.599 s
+[INFO] Finished at: 2026-05-20T15:57:57Z
+[INFO] ------------------------------------------------------------------------

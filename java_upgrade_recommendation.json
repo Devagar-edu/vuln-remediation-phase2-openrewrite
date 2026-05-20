@@ -1,0 +1,302 @@
+{
+  "recommendation": "UPGRADE_JAVA_17",
+  "confidence": 0.9999999999999999,
+  "current_java_version": "1.8",
+  "target_java_version": "17",
+  "rationale": "18  vulnerabilities require Java version upgrade",
+  "vulnerabilities_requiring_upgrade": [
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "1.2.12",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "1.2.12",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "2.13.5",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "4.1.101.Final",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "4.1.101.Final",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "4.1.115.Final",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "9.0.116",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "9.0.83",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "42.3.8",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "2.7.18",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "2.7.18",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "1.30",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    }
+  ],
+  "all_vulnerabilities_addressed": [
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "1.2.12",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "1.2.12",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "2.13.5",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "4.1.101.Final",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "4.1.101.Final",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "4.1.115.Final",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "9.0.116",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "9.0.83",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "42.3.8",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "5.3.31",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "2.7.18",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "2.7.18",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    },
+    {
+      "cve": "UNKNOWN",
+      "package": "UNKNOWN",
+      "current_version": "1.30",
+      "fixed_version": "UNKNOWN",
+      "min_java_version": "17",
+      "severity": "UNKNOWN"
+    }
+  ],
+  "spring_boot_upgrade_required": true,
+  "target_spring_boot_version": "3.0.0",
+  "migration_complexity": "LOW"
+}
