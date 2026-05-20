@@ -172,7 +172,7 @@ def get_fix_requirements(vuln: Dict[str, Any]) -> Dict[str, Any]:
         #     return {'min_java_version': 11, 'requires_upgrade': True}
         
         # Most modern libraries work with Java 8
-        return {'min_java_version': 21, 'requires_upgrade': False}
+        return {'min_java_version': 17, 'requires_upgrade': False}
         
     except Exception as e:
         print(f"Warning: Failed to determine fix requirements for vulnerability: {e}")
