@@ -137,11 +137,24 @@ def create_jira_ticket(json_file):
     issue_dict = {
         "project": {"key": PROJECT_KEY},
         "summary": f"Security Scan Findings ({scanner}) - {scan['scan_metadata']['project']}",
-        "description": description,
-        "issuetype": {"name": "Task"},
-        "labels": labels
+        "description": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+        {
+            "type": "paragraph",
+            "content": [
+                {
+                    "type": "text",
+                    "text": description  # Ensure 'description' is plain text
+                }
+            ]
+        }
+        ]
+    },
+    "issuetype": {"name": "Task"},
+    "labels": labels
     }
-
     issue = jira.create_issue(fields=issue_dict)
 
     print("Jira ticket created:", issue.key)
