@@ -36,17 +36,17 @@
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-handler</artifactId>
-      <version>4.1.115.Final</version>
+      <version>4.2.1.Final</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>5.3.31</version>
+      <version>7.0.0-M6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
-      <version>9.0.116</version>
+      <version>9.0.118</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
