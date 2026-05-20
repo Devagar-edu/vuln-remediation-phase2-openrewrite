@@ -154,22 +154,22 @@ def get_fix_requirements(vuln: Dict[str, Any]) -> Dict[str, Any]:
         
         # Fallback to heuristics if AI is not available
         # Spring Framework 6.x requires Java 17
-        if 'spring-webmvc' in package_name or 'spring-web' in package_name:
-            if fixed_version.startswith('6.'):
-                return {'min_java_version': 17, 'requires_upgrade': True}
-            elif fixed_version.startswith('5.'):
-                return {'min_java_version': 21, 'requires_upgrade': False}
+        # if 'spring-webmvc' in package_name or 'spring-web' in package_name:
+        #     if fixed_version.startswith('6.'):
+        #         return {'min_java_version': 17, 'requires_upgrade': True}
+        #     elif fixed_version.startswith('5.'):
+        #         return {'min_java_version': 21, 'requires_upgrade': False}
         
         # Spring Boot 3.x requires Java 17
-        if 'spring-boot' in package_name:
-            if fixed_version.startswith('3.'):
-                return {'min_java_version': 17, 'requires_upgrade': True}
-            elif fixed_version.startswith('2.'):
-                return {'min_java_version': 21, 'requires_upgrade': False}
+        # if 'spring-boot' in package_name:
+        #     if fixed_version.startswith('3.'):
+        #         return {'min_java_version': 17, 'requires_upgrade': True}
+        #     elif fixed_version.startswith('2.'):
+        #         return {'min_java_version': 21, 'requires_upgrade': False}
         
         # Jakarta EE (jakarta.*) requires Java 11+
-        if 'jakarta' in package_name:
-            return {'min_java_version': 11, 'requires_upgrade': True}
+        # if 'jakarta' in package_name:
+        #     return {'min_java_version': 11, 'requires_upgrade': True}
         
         # Most modern libraries work with Java 8
         return {'min_java_version': 21, 'requires_upgrade': False}
@@ -854,10 +854,14 @@ def analyze_java_upgrade(findings_path: str, pom_path: str, src_dir: str) -> Dic
         
         if target_java == 11:
             recommendation = "UPGRADE_JAVA_11"
-        elif target_java >= 17:
+        elif target_java == 17:
             recommendation = "UPGRADE_JAVA_17"
             target_java = 17
             target_java_str = "17"
+        elif target_java > 17:
+            recommendation = "UPGRADE_JAVA_21"
+            target_java = 17
+            target_java_str = "21"
         else:
             recommendation = "STAY_JAVA_8"
             target_java = current_java
