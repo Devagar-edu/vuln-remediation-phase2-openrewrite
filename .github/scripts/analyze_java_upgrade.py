@@ -130,7 +130,7 @@ def get_fix_requirements(vuln: Dict[str, Any]) -> Dict[str, Any]:
         vulnerable_packages = package_details.get('vulnerablePackages', [])
         
         if not vulnerable_packages:
-            return {'min_java_version': 8, 'requires_upgrade': False}
+            return {'min_java_version': 21, 'requires_upgrade': True}
         
         pkg = vulnerable_packages[0]
         package_name = pkg.get('name', '')
@@ -158,25 +158,25 @@ def get_fix_requirements(vuln: Dict[str, Any]) -> Dict[str, Any]:
             if fixed_version.startswith('6.'):
                 return {'min_java_version': 17, 'requires_upgrade': True}
             elif fixed_version.startswith('5.'):
-                return {'min_java_version': 8, 'requires_upgrade': False}
+                return {'min_java_version': 21, 'requires_upgrade': False}
         
         # Spring Boot 3.x requires Java 17
         if 'spring-boot' in package_name:
             if fixed_version.startswith('3.'):
                 return {'min_java_version': 17, 'requires_upgrade': True}
             elif fixed_version.startswith('2.'):
-                return {'min_java_version': 8, 'requires_upgrade': False}
+                return {'min_java_version': 21, 'requires_upgrade': False}
         
         # Jakarta EE (jakarta.*) requires Java 11+
         if 'jakarta' in package_name:
             return {'min_java_version': 11, 'requires_upgrade': True}
         
         # Most modern libraries work with Java 8
-        return {'min_java_version': 8, 'requires_upgrade': False}
+        return {'min_java_version': 21, 'requires_upgrade': False}
         
     except Exception as e:
         print(f"Warning: Failed to determine fix requirements for vulnerability: {e}")
-        return {'min_java_version': 8, 'requires_upgrade': False}
+        return {'min_java_version': 21, 'requires_upgrade': False}
 
 
 def analyze_dependency_with_ai(package_name: str, current_version: str, 
